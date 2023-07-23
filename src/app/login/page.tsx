@@ -10,21 +10,28 @@ const loginPage = () => {
     email: '',
     password: '',
   });
+  const [error, setError] = useState('');
 
   const onLogin = async (e: any) => {
     e.preventDefault();
     try {
       if (user.email.length > 0 && user.password.length > 0) {
         const { data } = await axios.post('/api/users/login', user);
-        if (data.success) {
+        console.log(data.status);
+
+        if (data.status === 'NOT_FOUND') {
+          setError('User Not Found..');
+        } else if (data.status === 'WRONG_PASS') {
+          setError('Wrong Password');
+        } else if (data.success) {
           console.log(data.message);
           router.push('/profile');
         } else {
           console.log(data.message); // Display error message from the server
         }
       }
-    } catch (error) {
-      console.log(error); // Log any other unexpected errors
+    } catch (error: any) {
+      console.log(error.message); // Log any other unexpected errors
     }
   };
 
@@ -36,6 +43,9 @@ const loginPage = () => {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white text-center">
               Login
             </h1>
+            <h5 className="text-center text-red-500">
+              {error !== '' ? error : ''}
+            </h5>
             <form className="space-y-4 md:space-y-6">
               <div>
                 <label

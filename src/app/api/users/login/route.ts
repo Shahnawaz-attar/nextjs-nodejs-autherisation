@@ -14,15 +14,18 @@ export async function POST(request: NextRequest) {
     const user = await Users.findOne({ email });
 
     if (!user) {
-      return NextResponse.json({ message: 'User Not Found' }, { status: 400 });
+      return NextResponse.json(
+        { message: 'User Not Found', status: 'NOT_FOUND' },
+        { status: 200 },
+      );
     }
 
     const passmatch = await bcryptjs.compare(password, user.password);
 
     if (!passmatch) {
       return NextResponse.json(
-        { message: 'Password wrong', status: false },
-        { status: 400 },
+        { message: 'Password wrong', status: 'WRONG_PASS' },
+        { status: 200 },
       );
     }
 
